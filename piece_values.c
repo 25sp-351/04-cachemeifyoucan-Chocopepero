@@ -13,11 +13,19 @@ int compare_piece_values(PieceLengthValue *a, PieceLengthValue *b) {
         return a->value - b->value;
     return a->length - b->length;
 }
-Vec read_piece_values() {
+Vec read_piece_values(char *file_name) {
     Vec val_list = new_vec(sizeof(PieceLengthValue));
-    while (!feof(stdin)) {
+    FILE *file;
+    file = fopen(file_name, "r");
+
+    if (file == NULL) {
+        perror("Error opening file");
+        return NULL;
+    }
+
+    while (!feof(file)) {
         PieceLengthValue item;
-        if (2 != fscanf(stdin, "%d, %d\n", &item.length, &item.value) ||
+        if (2 != fscanf(file, "%d, %d\n", &item.length, &item.value) ||
             item.length < 1 || item.value < 1 ||
             _list_contains_length(val_list, item.length)) {
             vec_free(val_list);

@@ -57,13 +57,13 @@ void cutlist_print(CutList *cl) {
     printf("Value: %5d\n", cl->total_value);
 }
 // frees the starting list; returns an allocated CutList
-CutList *choose_best_cuts(CutList *starting_cutlist, Vec pv) {
+CutList *_optimize(CutList *starting_cutlist, Vec pv) {
     CutList *best_option_so_far = cutlist_copy(starting_cutlist);
     for (PieceLengthValue *length_to_try = vec_items(pv);
          length_to_try->length != 0; ++length_to_try) {
         if (!cutlist_can_add_piece(starting_cutlist, *length_to_try))
             continue;
-        CutList *maybe_better_option = choose_best_cuts(
+        CutList *maybe_better_option = _optimize(
             cutlist_add_piece(cutlist_copy(starting_cutlist), *length_to_try),
             pv);
         if (maybe_better_option->total_value >
@@ -78,6 +78,26 @@ CutList *choose_best_cuts(CutList *starting_cutlist, Vec pv) {
     cutlist_free(starting_cutlist);
     return best_option_so_far;
 }
-CutList *optimal_cutlist_for(Vec pv, PieceLength total_length) {
-    return choose_best_cuts(new_cutlist(pv, total_length), pv);
+
+unsigned int prompt_for_length() {
+    printf("Please enter a rod length to cut: (Ctrl + D to exit)\n");
+
+    unsigned int input_len = 0;
+
+    while (!input_len) {
+        unsigned int arguments = scanf("%u", &input_len);
+        if (arguments == EOF)
+            return 0;
+        if (arguments != 1) {
+            printf("Please enter only integers.\n");
+            while (getchar() != '\n')
+                ;  // clear the input buffer
+            continue;
+        } else if (!input_len) {
+            printf("Rod length cannot be 0.\n");
+            continue;
+        } else
+            return input_len;
+    }
+    return 0;
 }

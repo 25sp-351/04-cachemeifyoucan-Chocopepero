@@ -5,6 +5,7 @@
 
 #include "vec.h"
 
+
 typedef int PieceLength;
 typedef int PieceValue;
 typedef struct pv {
@@ -13,7 +14,7 @@ typedef struct pv {
 } PieceLengthValue;
 // Returns NULL if there is an error in the input
 // Returns them sorted by value then length (both descending)
-Vec read_piece_values();
+Vec read_piece_values(char *file_name);
 void print_piece_values(Vec ptr);
 bool pvs_equal(PieceLengthValue *pv1, PieceLengthValue *pv2);
 #endif
